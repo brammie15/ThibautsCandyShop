@@ -1,7 +1,6 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:thibaut_teller/addUserDialog.dart';
 import 'package:thibaut_teller/klantDetailsAlert.dart';
 import 'package:provider/provider.dart';
 import 'package:thibaut_teller/providers/Klanten.dart';
@@ -14,73 +13,34 @@ class TodoList extends StatefulWidget {
   _TodoListState createState() => new _TodoListState();
 }
 
-
 class _TodoListState extends State<TodoList> {
+  final TextEditingController _naamController = TextEditingController();
+  final TextEditingController _puntenController = TextEditingController();
   int counter = 0;
-  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      key: _scaffoldKey,
       appBar: AppBar(
         title: const Text("Thibaut's Candy Shop"),
         backgroundColor: Colors.pink,
-        actions: [
-          PopupMenuButton<String>(
-            onSelected: handleOption,
-            itemBuilder: (BuildContext context) {
-              return {'GetData', 'Clear'}.map((String choice) {
-                return PopupMenuItem<String>(
-                  value: choice,
-                  child: Text(choice),
-                );
-              }).toList();
-            },
-          ),
-        ],
-        leading: const Icon(
-          Icons.menu,
-        ),
       ),
       body: Container(
-        width: MediaQuery.of(context).size.width,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            const Padding(
-              padding: const EdgeInsets.fromLTRB(20, 40, 20, 5),
-              child: TextField(
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                  labelText: 'Zoek',
-                ),
-              ),
-            ),
-            Container(
-              // width: MediaQuery.of(context).size.width,
-              child: Flexible(
-                child: GridView.count(
-                  // physics: const ScrollPhysics(),
-                  // scrollDirection: Axis.vertical,
-                  // shrinkWrap: true,
-                  padding: const EdgeInsets.symmetric(vertical: 8.0),
-                  crossAxisCount: 4,
-                  children: context.read<Klanten>().klanten.map((Klant klant) {
-                    return KlantKader(
-                      klantId: klant.id,
-                      onTap: () {
-                        handleTap(klant);
-                      },
-                    );
-                  }).toList(),
-                ),
-              ),
-            ),
-          ],
+        child: GridView.count(
+          padding: const EdgeInsets.symmetric(vertical: 8.0),
+          crossAxisCount: 2,
+          children: context.read<Klanten>().klanten.map((Klant klant) {
+            return KlantKader(
+              klantId: klant.id,
+              onTap: () {
+                handleTap(klant);
+              },
+            );
+          }).toList(),
         ),
       ),
       floatingActionButton: FloatingActionButton(
-          onPressed: () => displayAddUserDialog(context),
+          onPressed: () => _displayDialog(context),
           tooltip: 'Klant Toevoegen',
           child: const Icon(Icons.add)),
     );
@@ -90,16 +50,101 @@ class _TodoListState extends State<TodoList> {
     klantenAlertDialog(context, klant.id);
   }
 
-  void handleOption(String option){
-    print(option);
-    switch(option){
-      case "GetData":
-        Provider.of<Klanten>(context, listen: false).pullFromServer();
-        break;
-      case "Clear":
-        Provider.of<Klanten>(context, listen: false).clearKlanten();
-        break;
-    }
+  // void _handleAddPunt(Klant klant, int punten){
+  //   context.read<Klanten>().handleAddPunt(klant, punten);
+  // }
+  //
+  // void _handleSubtractPunt(Klant klant, int punten){
+  //   context.read<Klanten>().handleSubtractPunt(klant, punten);
+  // }
+
+  void _addKlant(String name, int punten) {
+    // punten = (punten == null) ? 0 : punten;
+    context
+        .read<Klanten>()
+        .addKlant(Klant(name: name, punten: punten, aantalItems: 0));
+    _naamController.clear();
+    _puntenController.clear();
+  }
+
+  Future<void> _displayDialog(BuildContext context) async {
+    return showDialog(
+        context: context,
+        builder: (_) => AlertDialog(
+              shape: const RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(15.0)),
+              ),
+              insetPadding: EdgeInsets.zero,
+              title: const Text(
+                "Klant Toevoegen",
+                textAlign: TextAlign.center,
+                style: const TextStyle(fontSize: 40),
+              ),
+              content: Container(
+                width: MediaQuery.of(context).size.width * 0.80,
+                height: MediaQuery.of(context).size.height * 0.4,
+                child: Column(
+                  mainAxisSize: MainAxisSize.values[0],
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    TextField(
+                      controller: _naamController,
+                      decoration: const InputDecoration(
+                        border: OutlineInputBorder(),
+                        labelText: 'Naam',
+                      ),
+                    ),
+                    TextField(
+                      controller: _puntenController,
+                      decoration: const InputDecoration(
+                        border: OutlineInputBorder(),
+                        labelText: 'Punten',
+                      ),
+                    ),
+                    const Divider(),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        ElevatedButton(
+                          onPressed: () {
+                            if(_naamController.text.isNotEmpty){
+                              _addKlant(_naamController.text, _puntenController.text != "" ? int.parse(_puntenController.text) : 0);
+                              print("Naam: ${_naamController.text} Punten: ${_puntenController.text}");
+                              Navigator.of(context).pop();
+                            }else{
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text('Vul alle velden in'),
+                                ),
+                              );
+                            }
+                          },
+                          child: const Padding(
+                            padding: EdgeInsets.all(20.0),
+                            child: Text("Toevoegen"),
+                          ),
+                        ),
+                        ElevatedButton(
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                          style: ElevatedButton.styleFrom(
+                            primary: Colors.red,
+                          ),
+                          child: const Padding(
+                            padding: EdgeInsets.all(20.0),
+                            child: Text("Annuleren"),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ));
   }
 }
 
@@ -111,7 +156,6 @@ class ThibautApp extends StatelessWidget {
     return MaterialApp(
       title: "Thibaut's Candy Shop",
       home: TodoList(),
-
     );
   }
 }
