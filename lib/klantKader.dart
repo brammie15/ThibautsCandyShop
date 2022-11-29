@@ -12,8 +12,11 @@ class KlantKader extends StatelessWidget {
   }) : super(key: ObjectKey(klantId));
 
   final String klantId;
+
   final VoidCallback onTap;
   // final onTodoChanged;
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -28,26 +31,42 @@ class KlantKader extends StatelessWidget {
         },
         child: Container(
           decoration: BoxDecoration(
-              border: Border.all(color: Colors.black),
-              borderRadius: BorderRadius.circular(15),
-              color: Colors.black45),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              // CircleAvatar(
-              //   child: Text(klant.name[0]),
-              //   maxRadius: 50,
-              // ),
-              Text(
-                Provider.of<Klanten>(context).getKlant(klantId).name,
-                style: const TextStyle(fontSize: 34, color: Colors.white),
-              ),
-              Text("${Provider.of<Klanten>(context).getKlant(klantId).punten}", style: TextStyle(fontSize: 20, color: Colors.white),)
-            ],
+            border: Border.all(color: Colors.black),
+            borderRadius: BorderRadius.circular(15),
+            color: Colors.black45,
+          ),
+          child: FittedBox(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                // CircleAvatar(
+                //   child: Text(Provider.of<Klanten>(context).getKlant(klantId).name[0]),
+                //   maxRadius: 50,
+                // ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: FittedBox(
+                    child: Text(
+                      Provider.of<Klanten>(context).getKlant(klantId).name,
+                      style: const TextStyle(fontSize: 34, color: Colors.white),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                ),
+                FittedBox(
+                  child: Text(
+                    Provider.of<Klanten>(context).getKlant(klantId).punten.toString(),
+                    style: const TextStyle(fontSize: 40, color: Colors.red),
+                  ),
+                )
+              ],
+            ),
           ),
         ),
       ),
     );
   }
 }
+
+//TODO: Optemize code abit but not that much, also fix loading of klanten, make it reshuffle after another klant is added ofc and make it so that it doesnt show the same klant twice in a row
