@@ -37,12 +37,12 @@ Future<void> klantenAlertDialog(
                         height: 20,
                       ),
                       Text(
-                          "${Provider.of<Klanten>(context).getKlant(klantId).punten}",
+                          "${Provider.of<Klanten>(context).getKlant(klantId).points}",
                           style: const TextStyle(
                               fontSize: 70, color: Colors.pink)),
                       const Divider(),
                       Text(
-                          "Aantal items: ${Provider.of<Klanten>(context).getKlant(klantId).freecandy}",
+                          "Aantal items: ${Provider.of<Klanten>(context).getKlant(klantId).toRecieveFreeCandy}",
                           style: const TextStyle(fontSize: 20)),
                       Column(
                         children: [
@@ -98,7 +98,7 @@ Future<void> klantenAlertDialog(
                             buttonText: "redeem Speciaal",
                             active: Provider.of<Klanten>(context)
                                     .getKlant(klantId)
-                                    .aantalRecieved >=
+                                    .amountRecievedFreeCandy >=
                                 1,
                           )
                         ],

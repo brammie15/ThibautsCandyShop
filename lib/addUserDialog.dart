@@ -56,7 +56,7 @@ Future<void> displayAddUserDialog(BuildContext context) async {
                         }else{
                           aantalPunten = int.parse(puntenController.text);
                         }
-                        Provider.of<Klanten>(context, listen: false).addKlant(Klant(name: naamController.text, punten: aantalPunten, aantalRecieved: 0));
+                        Provider.of<Klanten>(context, listen: false).addKlant(Klant(name: naamController.text, punten: aantalPunten, amountRecievedFreeCandy: 0));
                         naamController.clear();
                         puntenController.clear();
                         Navigator.of(context).pop();

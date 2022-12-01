@@ -56,7 +56,7 @@ class KlantKader extends StatelessWidget {
                 ),
                 FittedBox(
                   child: Text(
-                    Provider.of<Klanten>(context).getKlant(klantId).punten.toString(),
+                    Provider.of<Klanten>(context).getKlant(klantId).points.toString(),
                     style: const TextStyle(fontSize: 40, color: Colors.red),
                   ),
                 )
